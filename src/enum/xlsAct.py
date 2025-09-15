@@ -5,8 +5,9 @@ class XlsColumns(StrEnum):
     NUMBER = "Номер"
     DATE = "Дата"
     NAME = "Имя"
-    DEBIT = "Дебет"
-    CREDIT = "Кредит"
+    DEBIT_AMOUNT = "Дебет"
+    CREDIT_AMOUNT = "Кредит"
+
 
 class ActConfig(IntEnum):
     HEADERS = 9
