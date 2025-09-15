@@ -10,12 +10,10 @@ class Debit:
     Структура описываюшая дебет.
 
     Атрибуты:
-        index (int): ;
         name (str): Имя документа, где описан дебет (платежное поручение);
         date (datetime): Дата в физическом документе;
         amount (Decimal): Сумма полученная по документам;
     """
-    index: int
     name: str
     date: datetime
     amount: Decimal
