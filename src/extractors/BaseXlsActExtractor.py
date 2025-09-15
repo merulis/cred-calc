@@ -1,39 +1,33 @@
-import pandas as pd
-
+from abc import ABC, abstractmethod
 from collections import deque
+
+import pandas as pd
 
 from src.struct.debit import Debit
 from src.struct.credit import Credit
-from src.enum.xlsAct import ActConfig, XlsColumns
+from src.enum.xlsAct import XlsColumns
 
 
-class SoureActProcessor:
-    @staticmethod
-    def unpack(raw_data: pd.DataFrame) -> tuple[deque[Debit], list[Credit]]:
-        debits_df, credits_df = SoureActProcessor._split_df(
-            SoureActProcessor._normalize(raw_data)
-        )
-
+class BaseXlsActExtractor(ABC):
+    @classmethod
+    def unpack(
+        cls,
+        raw_data: pd.DataFrame,
+    ) -> tuple[deque[Debit], list[Credit]]:
+        """
+        Template Method:
+        share algorithm of unpacking xls act
+        """
+        debits_df, credits_df = cls._split_df(cls._normalize(raw_data))
         return (
-            SoureActProcessor._unpack_debits(debits_df),
-            SoureActProcessor._unpack_credits(credits_df),
+            cls._unpack_debits(debits_df),
+            cls._unpack_credits(credits_df),
         )
 
-    @staticmethod
-    def _normalize(raw_data: pd.DataFrame) -> pd.DataFrame:
-        raw_data = raw_data.iloc[ActConfig.HEADERS:]
-        blank_row_index = (
-            raw_data[raw_data.isnull().all(axis=1)].index[0]
-            - ActConfig.DIFF_FROM_BLANK_TARGET
-        )
-        raw_data = raw_data.iloc[
-            :blank_row_index, ActConfig.START_COLUMN:ActConfig.END_COLUMN
-        ]
-        data = raw_data.dropna(axis=1, how="all").fillna(0)
-
-        data.columns = list(XlsColumns)
-
-        return data
+    @abstractmethod
+    def _normalize(self, raw_data):
+        """Абстрактный шаг — зависит от конкретного формата акта"""
+        pass
 
     @staticmethod
     def _split_df(
