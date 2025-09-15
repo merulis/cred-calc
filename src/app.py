@@ -2,7 +2,7 @@ import tkinter as tk
 import pandas as pd
 
 from src.dataImporter import DataImporter
-from src.soureActExtractor import SoureActExtractor, XlsColumns
+from soureActProcessor import SoureActProcessor, XlsColumns
 
 from pathlib import Path
 from tkinter import filedialog, ttk
@@ -47,7 +47,7 @@ class App:
     def load_table_from_source(self):
         filepath = self.get_filepath()
         raw_data = DataImporter.load_xls(filepath)
-        data = SoureActExtractor.standartize_input(raw_data)
+        data = SoureActProcessor.standartize_input(raw_data)
         self.fill_table(data)
         self.calculate_debts(data)
 
