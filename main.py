@@ -1,6 +1,10 @@
-from src.app import App
+from src.dummyApp import DummyTkApp
+
+
+def main():
+    app = DummyTkApp()
+    app.run()
 
 
 if __name__ == "__main__":
-    app = App()
-    app.start_app()
+    main()
