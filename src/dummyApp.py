@@ -1,7 +1,7 @@
 import tkinter as tk
 
-from src.view.dummyView import DummyView
-from src.controller.dummyController import DummyController
+from src.views.dummyView import DummyView
+from src.controllers.dummyController import DummyController
 
 
 class DummyTkApp:

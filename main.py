@@ -1,8 +1,8 @@
-from src.dummyApp import DummyTkApp
+from src.tkApp import TkApp
 
 
 def main():
-    app = DummyTkApp()
+    app = TkApp()
     app.run()
 
 
