@@ -22,15 +22,14 @@ class Controller:
     def load_excel(self, filepath: str):
         self.debits, self.credits = PreparedActExtractor.unpack(filepath)
 
-        for row in self.main_view.table.get_children():
-            self.main_view.table.delete(row)
+        self.main_view.clean_tables()
 
         for d in self.debits:
-            self.main_view.insert_row(
+            self.main_view.insert_debit(
                 (d.date.strftime("%d.%m.%Y"), d.name, str(d.amount))
             )
         for c in self.credits:
-            self.main_view.insert_row(
+            self.main_view.insert_credit(
                 (c.date.strftime("%d.%m.%Y"), c.name, str(c.amount))
             )
 
@@ -48,7 +47,7 @@ class Controller:
 
         result_view = ResultView(self.main_view)
         for r in results:
-            result_view.insert_result(r.to_list())
+            result_view.insert_row(r.to_list())
 
         result_view.save_button.config(
             command=lambda: self.save_results(results),

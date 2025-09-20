@@ -20,7 +20,7 @@ HEADERS = {
     "due_date": "Срок оплаты",
     "credit_date": "Дата оплаты",
     "paid": "Оплачено",
-    "unpaid": "Неоплачено",
+    "unpaid": "Остаток от платежа",
     "overdue_days": "Дней просрочки",
     "penalty_base": "Баз. неустойка",
     "penalty_additional": "Штрафная неустойка",
@@ -38,19 +38,26 @@ class ResultView(tk.Toplevel):
         self._create_save_button()
 
     def _create_table(self):
-        self.result_table = ttk.Treeview(
+        self.table = ttk.Treeview(
             self,
             columns=COLUMNS,
             show="headings",
         )
 
         for col in COLUMNS:
-            self.result_table.heading(col, text=HEADERS[col])
-            self.result_table.column(col, width=120, anchor="center")
+            self.table.heading(col, text=HEADERS[col])
+            self.table.column(col, width=120, anchor="center")
+
+        self.table.pack(fill="both", expand=True, pady=10)
+
+        self.table.tag_configure("oddrow", background="#e0e0e0")  # светло-серый
+        self.table.tag_configure("evenrow", background="#ffffff")  # белый
 
     def _create_save_button(self):
         self.save_button = tk.Button(self, text="Сохранить в файл")
         self.save_button.pack(pady=10)
 
-    def insert_result(self, values: list | tuple):
-        self.result_table.insert("", "end", values=values)
+    def insert_row(self, values: list | tuple):
+        index = len(self.table.get_children())
+        tag = "evenrow" if index % 2 == 0 else "oddrow"
+        self.table.insert("", "end", values=values, tags=(tag,))

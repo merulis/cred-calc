@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 
 
 @dataclass
@@ -17,15 +17,20 @@ class MatchedPayment:
     penalty_percent: Decimal
 
     def to_list(self) -> list:
+        def q(val: Decimal) -> str:
+            if isinstance(val, Decimal):
+                return str(val.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
+            return str(val)
+
         return [
             self.debit_date.strftime("%d.%m.%Y") if self.debit_date else None,
-            str(self.debit_amount),
+            q(self.debit_amount),
             self.due_date.strftime("%d.%m.%Y") if self.due_date else None,
             self.credit_date.strftime("%d.%m.%Y") if self.credit_date else None,
-            str(self.paid),
-            str(self.unpaid),
+            q(self.paid),
+            q(self.unpaid),
             self.overdue_days,
-            str(self.penalty_base),
-            str(self.penalty_additional),
-            str(self.penalty_percent),
+            q(self.penalty_base),
+            q(self.penalty_additional),
+            q(self.penalty_percent),
         ]
