@@ -6,6 +6,7 @@ from src.views.resultView import ResultView
 from src.settlementCalculator import SettlementCalculator
 
 from src.extractors.preparedActExtractor import PreparedActExtractor
+from src.exporter.xlsExporter import XlsExporter
 
 
 class Controller:
@@ -45,13 +46,15 @@ class Controller:
             bank_rate,
         )
 
-        result_view = ResultView(self.main_view)
+        self.result_view = ResultView(self.main_view)
         for r in results:
-            result_view.insert_row(r.to_list())
+            self.result_view.insert_row(r.to_list())
 
-        result_view.save_button.config(
-            command=lambda: self.save_results(results),
-        )
+        self.result_view.on_save = lambda: self.save_results(results)
 
     def save_results(self, results):
-        print("Сохраняем результаты:", results)
+        filepath = self.result_view.ask_save_path()
+        if filepath:
+            XlsExporter.export_to_xls(results, filepath)
+
+        self.main_view.show_message(f"Файл сохранен: {filepath}")
