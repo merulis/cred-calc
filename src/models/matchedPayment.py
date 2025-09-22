@@ -12,7 +12,7 @@ class MatchedPayment:
     paid: Decimal = field(metadata={"title": "Оплачено"})
     unpaid: Decimal = field(metadata={"title": "Остаток"})
     overdue_days: int = field(metadata={"title": "Дней просрочки"})
-    penalty_base: Decimal = field(metadata={"title": "Базовая неустойка"})
+    penalty_base: Decimal = field(metadata={"title": "Неустойка"})
     penalty_additional: Decimal = field(metadata={"title": "Штрафная неустойка"})
     penalty_percent: Decimal = field(metadata={"title": "Проценты (317.1)"})
 
@@ -38,3 +38,11 @@ class MatchedPayment:
     @classmethod
     def headers(cls) -> list[str]:
         return [f.metadata.get("title", f.name) for f in fields(cls)]
+    
+    @classmethod
+    def names(cls) -> list[str]:
+        return [f.name for f in fields(cls)]
+    
+    @classmethod
+    def fields_map(cls) -> dict:
+        return {f.name: f.metadata.get("title", f.name) for f in fields(cls)}
