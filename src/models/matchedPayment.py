@@ -1,20 +1,20 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field, fields
 from datetime import datetime
 from decimal import Decimal, ROUND_HALF_UP
 
 
 @dataclass
 class MatchedPayment:
-    debit_date: datetime
-    debit_amount: Decimal
-    due_date: datetime
-    credit_date: datetime
-    paid: Decimal
-    unpaid: Decimal
-    overdue_days: int
-    penalty_base: Decimal
-    penalty_additional: Decimal
-    penalty_percent: Decimal
+    debit_date: datetime = field(metadata={"title": "Дата дебета"})
+    debit_amount: Decimal = field(metadata={"title": "Сумма дебета"})
+    due_date: datetime = field(metadata={"title": "Срок оплаты"})
+    credit_date: datetime = field(metadata={"title": "Дата оплаты"})
+    paid: Decimal = field(metadata={"title": "Оплачено"})
+    unpaid: Decimal = field(metadata={"title": "Остаток"})
+    overdue_days: int = field(metadata={"title": "Дней просрочки"})
+    penalty_base: Decimal = field(metadata={"title": "Базовая неустойка"})
+    penalty_additional: Decimal = field(metadata={"title": "Штрафная неустойка"})
+    penalty_percent: Decimal = field(metadata={"title": "Проценты (317.1)"})
 
     def to_list(self) -> list:
         def q(val: Decimal) -> str:
@@ -34,3 +34,7 @@ class MatchedPayment:
             q(self.penalty_additional),
             q(self.penalty_percent),
         ]
+
+    @classmethod
+    def headers(cls) -> list[str]:
+        return [f.metadata.get("title", f.name) for f in fields(cls)]
