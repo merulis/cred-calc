@@ -1,32 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 
-COLUMNS = (
-    "debit_date",
-    "debit_amount",
-    "due_date",
-    "credit_date",
-    "paid",
-    "unpaid",
-    "overdue_days",
-    "penalty_base",
-    "penalty_additional",
-    "penalty_percent",
-)
-
-HEADERS = {
-    "debit_date": "Дата дебета",
-    "debit_amount": "Сумма дебета",
-    "due_date": "Срок оплаты",
-    "credit_date": "Дата оплаты",
-    "paid": "Оплачено",
-    "unpaid": "Остаток от платежа",
-    "overdue_days": "Дней просрочки",
-    "penalty_base": "Баз. неустойка",
-    "penalty_additional": "Штрафная неустойка",
-    "penalty_percent": "Проценты (317.1)",
-}
-
+from src.models import MatchedPayment
 
 class ResultView(tk.Toplevel):
     def __init__(self, master=None):
@@ -38,15 +13,17 @@ class ResultView(tk.Toplevel):
         self._create_save_button()
 
     def _create_table(self):
+        map = MatchedPayment.fields_map()
+
         self.table = ttk.Treeview(
             self,
-            columns=COLUMNS,
+            columns=list(map.keys()),
             show="headings",
         )
 
-        for col in COLUMNS:
-            self.table.heading(col, text=HEADERS[col])
-            self.table.column(col, width=120, anchor="center")
+        for key, title in map.items():
+            self.table.heading(key, text=title)
+            self.table.column(key, width=120, anchor="center")
 
         self.table.pack(fill="both", expand=True, pady=10)
 
