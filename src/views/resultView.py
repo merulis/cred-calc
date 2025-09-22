@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, filedialog
 
 from src.models import MatchedPayment
 
@@ -8,6 +8,8 @@ class ResultView(tk.Toplevel):
         super().__init__(master)
         self.title("Результаты расчета")
         self.geometry("600x400")
+
+        self.on_save = None
 
         self._create_table()
         self._create_save_button()
@@ -31,8 +33,20 @@ class ResultView(tk.Toplevel):
         self.table.tag_configure("evenrow", background="#ffffff")  # белый
 
     def _create_save_button(self):
-        self.save_button = tk.Button(self, text="Сохранить в файл")
+        self.save_button = tk.Button(self, text="Сохранить в файл", command=self._handle_save)
         self.save_button.pack(pady=10)
+
+    def _handle_save(self):
+        if self.on_save:
+            self.on_save()
+
+    def ask_save_path(self) -> str | None:
+        return filedialog.asksaveasfilename(
+            defaultextension=".xlsx",
+            filetypes=[
+                ("Excel files", "*.xls *.xlsx")
+            ]
+        )
 
     def insert_row(self, values: list | tuple):
         index = len(self.table.get_children())
