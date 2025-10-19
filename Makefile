@@ -3,7 +3,7 @@ SHELL := /bin/bash
 APP_NAME = cred_calc
 ENTRY = main.py
 ICON = assets/icon.ico
-REQ = req.txt
+REQ = requirements.txt
 
 .PHONY: venv deps build rebuild clean run
 
@@ -13,7 +13,8 @@ venv:
 deps: venv 
 	@{ \
 		source .venv/bin/activate; \
-		pip install -r $(REQ); \
+		python -m pip install --upgrade pip; \
+		if [ -f requirements.txt ]; then pip install -r requirements.txt; fi \
 	}
 
 build: deps
