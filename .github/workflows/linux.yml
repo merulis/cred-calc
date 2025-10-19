@@ -40,7 +40,7 @@ jobs:
         run: |
           EXTRA_ICON=""
           if [ -n "${ICON}" ]; then EXTRA_ICON="--icon=${ICON}"; fi
-          pyinstaller --clean --onefile ${EXTRA_ICON} --name "${APP_NAME}" "${ENTRY}"
+          pyinstaller --clean --windowed --onefile ${EXTRA_ICON} --name "${APP_NAME}" "${ENTRY}"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
