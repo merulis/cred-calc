@@ -10,7 +10,7 @@ permissions: { contents: read }
 
 env:
   APP_NAME: credcalc
-  ENTRY: src/main.py
+  ENTRY: main.py
   ICON: assets/icon.ico
 
 jobs:
