@@ -26,20 +26,21 @@ jobs:
           cache: 'pip'
 
       - name: Install deps
+        shell: bash
         run: |
           python -m pip install -U pip
           if [ -f requirements.txt ]; then python -m pip install -r requirements.txt; fi
           python -m pip install pyinstaller
 
-      - name: Build (PyInstaller)
+      - name: Build
         shell: bash
         run: |
-          pyinstaller                       \
-            --clean                         \
-            --windowed                      \
-            --onefile                       \
-            --icon=${{ inputs.icon }}       \
-            --name "${{ inputs.app-name }}" \
+          pyinstaller
+            --clean
+            --windowed
+            --onefile
+            --icon=${{ inputs.icon }}
+            --name "${{ inputs.app-name }}"
             "${{ inputs.entry-point }}"
 
       - name: Upload artifact

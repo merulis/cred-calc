@@ -36,12 +36,12 @@ jobs:
       - name: Build
         shell: bash
         run: |
-          pyinstaller                       \
-            --clean                         \
-            --windowed                      \
-            --onefile                       \
-            --icon=${{ inputs.icon }}       \
-            --name "${{ inputs.app-name }}" \
+          pyinstaller
+            --clean
+            --windowed
+            --onefile
+            --icon=${{ inputs.icon }}
+            --name "${{ inputs.app-name }}"
             "${{ inputs.entry-point }}"
 
       - name: Upload artifact
