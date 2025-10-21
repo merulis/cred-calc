@@ -60,9 +60,9 @@ jobs:
           set -euo pipefail
           VERSION="${{ github.ref_name }}"
           APP_NAME="${{ env.app_name }}"
-          
-          LNX="dist/${APP_NAME}-${VERSION}-linux-x86_64"
-          WIN="dist/${APP_NAME}-${VERSION}-windows-x64.exe"
+
+          LNX="${APP_NAME}-${VERSION}-linux-x86_64"
+          WIN="${APP_NAME}-${VERSION}-windows-x64.exe"
 
           sha256sum dist/${LNX} >   dist/SHA256SUMS-${VERSION}.txt
           sha256sum dist/${WIN} >>  dist/SHA256SUMS-${VERSION}.txt
