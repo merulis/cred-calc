@@ -41,8 +41,8 @@ jobs:
             --windowed
             --onefile
             --icon=${{ inputs.icon }}
-            --name "${{ inputs.app-name }}"
-            "${{ inputs.entry-point }}"
+            --name ${{ inputs.app-name }}
+            --scriptname ${{ inputs.entry-point }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
