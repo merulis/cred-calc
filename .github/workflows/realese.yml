@@ -21,6 +21,7 @@ jobs:
       icon: assets/icon.ico 
       app-name: credcalc
       entry-point: main.py
+      upload_exe_with_name: linux-assets
 
   windows:
     uses: ./.github/workflows/build-windows.yml
@@ -29,6 +30,7 @@ jobs:
       icon: assets/icon.ico 
       app-name: credcalc
       entry-point:  main.py
+      upload_exe_with_name: windows-assets
 
   release:
     runs-on: ubuntu-latest
