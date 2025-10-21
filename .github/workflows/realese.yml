@@ -81,6 +81,6 @@ jobs:
           files: |
             dist/${{ env.app_name }}-${{ github.ref_name }}-linux-x86_64
             dist/${{ env.app_name }}-${{ github.ref_name }}-windows-x64.exe
-            dist/SHA256SUMS-${VERSION}.txt
+            dist/SHA256SUMS-${{ github.ref_name }}.txt
           fail_on_unmatched_files: true
           target_commitish: ${{ github.sha }}
