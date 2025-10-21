@@ -1,0 +1,53 @@
+name: Build & Release (Linux + Windows)
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  linux:
+    uses: ./.github/workflows/build-linux.yml
+    secrets: inherit
+
+  windows:
+    uses: ./.github/workflows/build-windows.yml
+    secrets: inherit
+
+  release:
+    runs-on: ubuntu-latest
+    needs: [linux, windows]
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: "*-assets"
+          path: dist
+          merge-multiple: true
+
+      - name: Show files
+        run: ls -alh dist
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: "Release ${{ github.ref_name }}"
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+          files: |
+            dist/yourapp-linux-x86_64
+            dist/yourapp-linux-x86_64.tar.gz
+            dist/SHA256SUMS-linux.txt
+            dist/yourapp-windows-x64.exe
+            dist/yourapp-windows-x64.zip
+            dist/SHA256SUMS-windows.txt
+          fail_on_unmatched_files: true
+          target_commitish: ${{ github.sha }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
