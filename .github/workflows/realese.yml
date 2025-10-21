@@ -1,7 +1,7 @@
 name: Build and Release
 
 env:
-  app-name: credcalc
+  app_name: credcalc
 
 on:
   push:
@@ -41,7 +41,28 @@ jobs:
           path: dist
           merge-multiple: true
 
-      - name: Show files
+      - name: Show files before rename
+        run: ls -alh dist
+
+      - name: Rename executable
+        run: |
+          set -euo pipefail
+          VERSION="${{ github.ref_name }}"
+
+          mv dist/${APP_NAME}     dist/${}-${VERSION}-linux-x86_64
+          mv dist/${APP_NAME}.exe dist/$${APP_NAME}-${VERSION}-windows-x64.exe
+
+      - name: Create Checksum
+        run: |
+          set -euo pipefail
+          VERSION="${{ github.ref_name }}"
+          LNX="dist/${APP_NAME}-${VERSION}-linux-x86_64"
+          WIN="dist/${APP_NAME}-${VERSION}-windows-x64.exe"
+
+          sha256sum dist/${LNX} >   dist/SHA256SUMS-${VERSION}.txt
+          sha256sum dist/${WIN} >>  dist/SHA256SUMS-${VERSION}.txt
+
+      - name: Show files after rename
         run: ls -alh dist
 
       - name: Publish GitHub Release
@@ -53,9 +74,8 @@ jobs:
           draft: true
           prerelease: false
           files: |
-            dist/${{ env.app-name }}
-            dist/${{ env.app-name }}.exe
+            dist/${{ env.app_name }}-${{ github.ref_name }}-linux-x86_64
+            dist/${{ env.app_name }}-${{ github.ref_name }}-windows-x64.exe
+            dist/SHA256SUMS-${VERSION}.txt
           fail_on_unmatched_files: true
           target_commitish: ${{ github.sha }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -4,14 +4,31 @@ on:
   workflow_call:
     inputs:
       icon:
-        required: true
         type: string
+        required: true
       entry-point:
-        required: true
         type: string
+        required: true
       app-name:
-        required: true
         type: string
+        required: true
+      python_ver:
+        type: string
+        description: specific python version you want to use
+        default: '3.12'
+      python_arch:
+        type: string
+        description: specific python architecture you want to use
+        default: 'x64'
+      exe_path:
+        type: string
+        description: Path on runner-os, where generated executable files are stored
+        default: './dist'
+      upload_exe_with_name:
+        type: string
+        description: If passed, uploads executable artifact  with this name. Else, artifact won't be uploaded.
+        default: ''
+
 
 jobs:
   build-windows:
@@ -22,7 +39,8 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: ${{ inputs.python_ver }}
+          architecture: ${{ inputs.python_arch }}
           cache: 'pip'
 
       - name: Install deps
@@ -46,5 +64,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: windows-x64-assets
-          path: dist/*
+          name: ${{ inputs.upload_exe_with_name }}
+          path: ${{ inputs.exe_path }}
