@@ -1,0 +1,86 @@
+name: Build and Release
+
+env:
+  app_name: credcalc
+
+on:
+  push:
+    tags:
+      - "v*"
+    branches: [ dev ]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  linux:
+    uses: ./.github/workflows/build-linux.yml
+    secrets: inherit
+    with:
+      icon: assets/icon.ico 
+      app-name: credcalc
+      entry-point: main.py
+      upload_exe_with_name: linux-assets
+
+  windows:
+    uses: ./.github/workflows/build-windows.yml
+    secrets: inherit
+    with:
+      icon: assets/icon.ico 
+      app-name: credcalc
+      entry-point:  main.py
+      upload_exe_with_name: windows-assets
+
+  release:
+    runs-on: ubuntu-latest
+    needs: [linux, windows]
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: "*-assets"
+          path: dist
+          merge-multiple: true
+
+      - name: Show files before rename
+        run: ls -alh dist
+
+      - name: Rename executable
+        run: |
+          set -euo pipefail
+          VERSION="${{ github.ref_name }}"
+          APP_NAME="${{ env.app_name }}"
+
+          mv dist/${APP_NAME}     dist/${APP_NAME}-${VERSION}-linux-x86_64
+          mv dist/${APP_NAME}.exe dist/${APP_NAME}-${VERSION}-windows-x64.exe
+
+      - name: Create Checksum
+        run: |
+          set -euo pipefail
+          VERSION="${{ github.ref_name }}"
+          APP_NAME="${{ env.app_name }}"
+
+          LNX="${APP_NAME}-${VERSION}-linux-x86_64"
+          WIN="${APP_NAME}-${VERSION}-windows-x64.exe"
+
+          sha256sum dist/${LNX} >   dist/SHA256SUMS-${VERSION}.txt
+          sha256sum dist/${WIN} >>  dist/SHA256SUMS-${VERSION}.txt
+
+      - name: Show files after rename
+        run: ls -alh dist
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: "Release ${{ github.ref_name }}"
+          generate_release_notes: true
+          draft: true
+          prerelease: false
+          files: |
+            dist/${{ env.app_name }}-${{ github.ref_name }}-linux-x86_64
+            dist/${{ env.app_name }}-${{ github.ref_name }}-windows-x64.exe
+            dist/SHA256SUMS-${{ github.ref_name }}.txt
+          fail_on_unmatched_files: true
+          target_commitish: ${{ github.sha }}
