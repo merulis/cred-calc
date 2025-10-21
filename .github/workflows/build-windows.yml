@@ -32,16 +32,16 @@ jobs:
           if [ -f requirements.txt ]; then python -m pip install -r requirements.txt; fi
           python -m pip install pyinstaller
 
-      - name: Build
+      - name: Create Executable
         shell: bash
         run: |
-          pyinstaller
-            --clean
-            --windowed
-            --onefile
-            --icon=${{ inputs.icon }}
-            --name ${{ inputs.app-name }}
-            --scriptname ${{ inputs.entry-point }}
+          pyinstaller \
+            --clean \
+            --windowed \
+            --onefile \
+            --icon=${{ inputs.icon }} \
+            --name ${{ inputs.app-name }} \
+            --scriptname ${{ inputs.entry-point }} \
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
