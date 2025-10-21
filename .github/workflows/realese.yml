@@ -1,9 +1,7 @@
-name: Build & Release (Linux + Windows)
+name: Build and Release
 
 env:
-  APP_NAME: credcalc
-  ENTRY: main.py
-  ICON: assets/icon.ico
+  app-name: credcalc
 
 on:
   push:
@@ -20,17 +18,17 @@ jobs:
     uses: ./.github/workflows/build-linux.yml
     secrets: inherit
     with:
-      icon: $ICON
-      app-name: $APP_NAME
-      entry-point: $ENTRY
+      icon: assets/icon.ico 
+      app-name: credcalc
+      entry-point: main.py
 
   windows:
     uses: ./.github/workflows/build-windows.yml
     secrets: inherit
     with:
-      icon: $ICON
-      app-name: $APP_NAME
-      entry-point: $ENTRY
+      icon: assets/icon.ico 
+      app-name: credcalc
+      entry-point:  main.py
 
   release:
     runs-on: ubuntu-latest
@@ -55,8 +53,8 @@ jobs:
           draft: true
           prerelease: false
           files: |
-            dist/${APP_NAME}
-            dist/${APP_NAME}.exe
+            dist/${{ env.app-name }}
+            dist/${{ env.app-name }}.exe
           fail_on_unmatched_files: true
           target_commitish: ${{ github.sha }}
         env:
