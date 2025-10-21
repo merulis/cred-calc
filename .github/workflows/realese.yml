@@ -50,14 +50,17 @@ jobs:
         run: |
           set -euo pipefail
           VERSION="${{ github.ref_name }}"
+          APP_NAME="${{ env.app_name }}"
 
-          mv dist/${APP_NAME}     dist/${}-${VERSION}-linux-x86_64
-          mv dist/${APP_NAME}.exe dist/$${APP_NAME}-${VERSION}-windows-x64.exe
+          mv dist/${APP_NAME}     dist/${APP_NAME}-${VERSION}-linux-x86_64
+          mv dist/${APP_NAME}.exe dist/${APP_NAME}-${VERSION}-windows-x64.exe
 
       - name: Create Checksum
         run: |
           set -euo pipefail
           VERSION="${{ github.ref_name }}"
+          APP_NAME="${{ env.app_name }}"
+          
           LNX="dist/${APP_NAME}-${VERSION}-linux-x86_64"
           WIN="dist/${APP_NAME}-${VERSION}-windows-x64.exe"
 
