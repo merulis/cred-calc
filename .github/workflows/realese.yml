@@ -42,12 +42,8 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            dist/yourapp-linux-x86_64
-            dist/yourapp-linux-x86_64.tar.gz
-            dist/SHA256SUMS-linux.txt
-            dist/yourapp-windows-x64.exe
-            dist/yourapp-windows-x64.zip
-            dist/SHA256SUMS-windows.txt
+            dist/${APP_NAME}
+            dist/${APP_NAME}.exe
           fail_on_unmatched_files: true
           target_commitish: ${{ github.sha }}
         env:
