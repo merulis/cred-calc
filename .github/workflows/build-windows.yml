@@ -32,13 +32,12 @@ jobs:
           EXTRA_ICON=""
           if [ -n "${ICON}" ]; then EXTRA_ICON="--icon=${ICON}"; fi
           pyinstaller --clean --windowed --onefile ${EXTRA_ICON} --name "${APP_NAME}" "${ENTRY}"
-          mkdir -p release
-          cp dist/${APP_NAME} release/yourapp-windows-x64.exe
-          (cd release && zip -r ${APP_NAME}-windows-x64.zip ${APP_NAME}-windows-x64.exe)
-          (cd release && sha256sum ${APP_NAME}-windows-x64.exe ${APP_NAME}-windows-x64.zip > SHA256SUMS-windows.txt)
+          cd dist
+          mv ${APP_NAME} ${APP_NAME}-windows-x64.exe
+          sha256sum ${APP_NAME}-windows-x64.exe > SHA256SUMS-windows.txt
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: windows-assets
-          path: release/*
+          name: windows-x64-assets
+          path: dist/*

@@ -38,13 +38,13 @@ jobs:
           EXTRA_ICON=""
           if [ -n "${ICON}" ]; then EXTRA_ICON="--icon=${ICON}"; fi
           pyinstaller --clean --windowed --onefile ${EXTRA_ICON} --name "${APP_NAME}" "${ENTRY}"
-          mkdir -p release
-          cp dist/${APP_NAME} release/${APP_NAME}-linux-x86_64
-          tar -czf release/${APP_NAME}-linux-x86_64.tar.gz -C release ${APP_NAME}-linux-x86_64
-          (cd release && sha256sum ${APP_NAME}-linux-x86_64 ${APP_NAME}-linux-x86_64.tar.gz > SHA256SUMS-linux.txt)
+          cd dist
+          mv ${APP_NAME} ${APP_NAME}-linux-x86_64
+          tar -czf dist/${APP_NAME}-linux-x86_64.tar.gz -C release ${APP_NAME}-linux-x86_64
+          sha256sum ${APP_NAME}-linux-x86_64 ${APP_NAME}-linux-x86_64.tar.gz > SHA256SUMS-linux.txt
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: linux-assets
-          path: release/*
+          name: linux-x86_64-assets
+          path: dist/*
