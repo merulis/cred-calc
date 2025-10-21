@@ -1,5 +1,10 @@
 name: Build & Release (Linux + Windows)
 
+env:
+  APP_NAME: credcalc
+  ENTRY: main.py
+  ICON: assets/icon.ico
+
 on:
   push:
     tags:
@@ -14,10 +19,18 @@ jobs:
   linux:
     uses: ./.github/workflows/build-linux.yml
     secrets: inherit
+    with:
+      icon: $ICON
+      app-name: $APP_NAME
+      entry-point: $ENTRY
 
   windows:
     uses: ./.github/workflows/build-windows.yml
     secrets: inherit
+    with:
+      icon: $ICON
+      app-name: $APP_NAME
+      entry-point: $ENTRY
 
   release:
     runs-on: ubuntu-latest
@@ -39,7 +52,7 @@ jobs:
           tag_name: ${{ github.ref_name }}
           name: "Release ${{ github.ref_name }}"
           generate_release_notes: true
-          draft: false
+          draft: true
           prerelease: false
           files: |
             dist/${APP_NAME}

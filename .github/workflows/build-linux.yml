@@ -1,14 +1,19 @@
 name: build-linux
 
 on:
-  workflow_call: {}
+  workflow_call:
+    inputs:
+      icon:
+        required: true
+        type: string
+      entry-point:
+        required: true
+        type: string
+      app-name:
+        required: true
+        type: string
 
 permissions: { contents: read }
-
-env:
-  APP_NAME: credcalc
-  ENTRY: main.py
-  ICON: assets/icon.ico
 
 jobs:
   build-linux:
@@ -29,10 +34,15 @@ jobs:
           python -m pip install pyinstaller
 
       - name: Build
+        shell: bash
         run: |
-          EXTRA_ICON=""
-          if [ -n "${ICON}" ]; then EXTRA_ICON="--icon=${ICON}"; fi
-          pyinstaller --clean --windowed --onefile ${EXTRA_ICON} --name "${APP_NAME}" "${ENTRY}"
+          pyinstaller                       \
+            --clean                         \
+            --windowed                      \
+            --onefile                       \
+            --icon=${{ inputs.icon }}       \
+            --name "${{ inputs.app-name }}" \
+            "${{ inputs.entry-point }}"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
