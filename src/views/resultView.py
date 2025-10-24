@@ -40,7 +40,7 @@ class ResultView(tk.Toplevel):
         if self.on_save:
             self.on_save()
 
-    def ask_save_path(self) -> str | None:
+    def ask_save_path(self) -> str:
         return filedialog.asksaveasfilename(
             defaultextension=".xlsx",
             filetypes=[

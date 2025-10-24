@@ -1,20 +1,6 @@
-import pandas as pd
-
-from src.extractors.baseXlsActExtractor import BaseXlsActExtractor
+from src.extractors.baseActExtractor import BaseActExtractor
 
 
-class PreparedActExtractor(BaseXlsActExtractor):
-    @classmethod
-    def _normalize(cls, filepath):
-        df = pd.read_excel(filepath, header=None)
-        df = df.rename(
-            columns=cls.COLUMNS.to_dict(),
-        )
-
-        df["date"] = pd.to_datetime(
-            df["date"],
-            format="%d.%m.%y",
-            errors="coerce",
-        )
-
+class PreparedActExtractor(BaseActExtractor):
+    def _normalize(self, df):
         return df
