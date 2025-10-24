@@ -33,12 +33,13 @@ class Controller:
             self.credits = None
 
     def load_data(self) -> None:
+        self.clean_controller()
         filename = self.main_view.ask_load_path()
         df = pandas.read_excel(filename)
 
         act_type = self.act_validator.validate(df)
         extractor = self.extractor_factory.create_extractor(act_type)
-        
+
         self.debits, self.credits = extractor.extract(df)
         self.render_table()
 
@@ -54,7 +55,12 @@ class Controller:
                 (c.date.strftime("%d.%m.%Y"), c.name, str(c.amount))
             )
 
-    def run_calculations(self, bank_rate: Decimal, deadline: int) -> None:
+    def run_calculations(
+        self,
+        bank_rate: Decimal,
+        base_penalty_rate: Decimal,
+        deadline: int,
+    ) -> None:
         if not (self.debits and self.credits):
             self.main_view.show_message("Нет данных для расчёта")
             return
@@ -64,6 +70,7 @@ class Controller:
             self.credits,
             deadline,
             bank_rate,
+            base_penalty_rate,
         )
 
         self.result_view = ResultView(self.main_view)
@@ -71,7 +78,6 @@ class Controller:
             self.result_view.insert_row(r.to_list())
 
         self.result_view.on_save = lambda: self.save_results(results)
-        self.clean_controller()
 
     def save_results(self, results):
         filepath = self.result_view.ask_save_path()
