@@ -52,12 +52,13 @@ class MainView(tk.Frame):
     def _call_calculate(self):
         attrs = self.get_attributes()
         if attrs is None:
+            messagebox.showwarning("Внимание", "Аттрибуты не заданы")
             return
         if not self._on_calculate:
             messagebox.showwarning("Внимание", "Обработчик расчёта не установлен")
             return
-        rate, deadline = attrs
-        self._on_calculate(rate, deadline)
+        bank_rate, base_penalty_rate, deadline = attrs
+        self._on_calculate(bank_rate, base_penalty_rate, deadline)
 
     def _create_load_panel(self):
         top_frame = tk.Frame(self)
@@ -109,20 +110,28 @@ class MainView(tk.Frame):
         tk.Label(attributes_frame, text="Ставка ЦБ (%):").grid(
             row=0, column=0, sticky="w", padx=5, pady=2
         )
-        self.rate_var = tk.StringVar(value="16")
-        tk.Entry(attributes_frame, textvariable=self.rate_var, width=10).grid(
+        self.cb_rate_var = tk.StringVar(value="16")
+        tk.Entry(attributes_frame, textvariable=self.cb_rate_var, width=10).grid(
             row=0, column=1, padx=5, pady=2
         )
 
-        tk.Label(attributes_frame, text="Срок оплаты (дней):").grid(
+        tk.Label(attributes_frame, text="Ставка базовой неустойки (%):").grid(
             row=1, column=0, sticky="w", padx=5, pady=2
+        )
+        self.base_penalty_rate = tk.StringVar(value="2")
+        tk.Entry(attributes_frame, textvariable=self.base_penalty_rate, width=10).grid(
+            row=1, column=1, padx=5, pady=2
+        )
+
+        tk.Label(attributes_frame, text="Срок оплаты (дней):").grid(
+            row=2, column=0, sticky="w", padx=5, pady=2
         )
         self.deadline_var = tk.StringVar(value="7")
         tk.Entry(
             attributes_frame,
             textvariable=self.deadline_var,
             width=10,
-        ).grid(row=1, column=1, padx=5, pady=2)
+        ).grid(row=2, column=1, padx=5, pady=2)
 
         return attributes_frame
 
@@ -137,13 +146,14 @@ class MainView(tk.Frame):
             defaultextension=".xlsx", filetypes=[("Excel files", "*.xls *.xlsx")]
         )
 
-    def get_attributes(self) -> tuple[Decimal, int]:
+    def get_attributes(self) -> tuple[Decimal, Decimal, int]:
         try:
-            rate = Decimal(self.rate_var.get())
+            cb_rate = Decimal(self.cb_rate_var.get())
+            base_penalty_rate = Decimal(self.base_penalty_rate.get())
             deadline = int(self.deadline_var.get())
         except ValueError:
             messagebox.showerror("Error", "Incorrect attributs value")
-        return (rate, deadline)
+        return (cb_rate, base_penalty_rate, deadline)
 
     def clean_tables(self):
         for row in self.debit_table.get_children():

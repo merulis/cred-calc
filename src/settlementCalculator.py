@@ -13,6 +13,7 @@ class SettlementCalculator:
         credits: list[Credit],
         deadline_days: int,
         bank_rate: Decimal,
+        base_rate: Decimal,
     ) -> list[MatchedPayment]:
         result = []
         for credit in credits:
@@ -25,8 +26,7 @@ class SettlementCalculator:
                 overdue_days = max((credit.date - due_date).days, 0)
 
                 base_p = cls._calculate_base_penalty(
-                    matched_amount,
-                    overdue_days,
+                    matched_amount, overdue_days, base_rate
                 )
                 additionaly_p = cls._calculate_additionaly_penalty(
                     matched_amount,
@@ -66,7 +66,7 @@ class SettlementCalculator:
     def _calculate_base_penalty(
         amount: Decimal,
         overdue_days: int,
-        penalty_rate=0.5,
+        penalty_rate: Decimal,
     ) -> Decimal:
         return amount * (Decimal(penalty_rate) / Decimal(100)) * Decimal(overdue_days)
 
@@ -84,5 +84,8 @@ class SettlementCalculator:
         bank_rate: Decimal,
     ) -> Decimal:
         return (
-            amount * (Decimal(bank_rate) / Decimal(100)) * Decimal(overdue_days) / Decimal(365)
+            amount
+            * (Decimal(bank_rate) / Decimal(100))
+            * Decimal(overdue_days)
+            / Decimal(365)
         )
