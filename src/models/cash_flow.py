@@ -5,14 +5,14 @@ from datetime import datetime
 
 
 @dataclass
-class Debit:
+class CashFlow:
     """
-    Структура описываюшая дебет.
+    Структура описываюшая поток средств (outflow и inflow).
 
     Атрибуты:
-        name (str): Имя документа, где описан дебет (платежное поручение);
+        name (str): Имя документа, описывающий поток;
         date (datetime): Дата в физическом документе;
-        amount (Decimal): Сумма полученная по документам;
+        amount (Decimal): Сумма средств указанная в документе;
     """
     name: str
     date: datetime

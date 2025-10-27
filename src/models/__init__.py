@@ -1,12 +1,10 @@
 from .actColumns import ActColumns
-from .credit import Credit
-from .debit import Debit
+from .credit import CashFlow
 from .matchedPayment import MatchedPayment
 
 
 __all__ = (
     "ActColumns",
-    "Credit",
-    "Debit",
+    "CashFlow",
     "MatchedPayment",
 )

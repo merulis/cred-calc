@@ -3,7 +3,7 @@ from collections import deque
 
 import pandas as pd
 
-from src.models import Debit, Credit, ActColumns
+from src.models import CashFlow, ActColumns
 
 
 class BaseActExtractor(ABC):
@@ -12,13 +12,13 @@ class BaseActExtractor(ABC):
     def extract(
         self,
         df,
-    ) -> tuple[deque[Debit], list[Credit]]:
+    ) -> tuple[deque[CashFlow], list[CashFlow]]:
         """
         Template Method:
         share algorithm of unpacking xls act
         """
         if df is None:
-            raise ValueError("Expect not NoneType object")
+            raise ValueError("Expect DataFrame, passed NoneType ")
 
         normalize_df = self._normalize(df)
         renamed_df = self.rename_df(normalize_df)
@@ -75,10 +75,10 @@ class BaseActExtractor(ABC):
 
         return (debits_df, credits_df)
 
-    def _unpack_credits(self, credits_df) -> list[Credit]:
+    def _unpack_credits(self, credits_df) -> list[CashFlow]:
         credits = []
         for _, row in credits_df.iterrows():
-            credit = Credit(
+            credit = CashFlow(
                 name=row.get(self.COLUMNS.name),
                 date=row.get(self.COLUMNS.date),
                 amount=row.get(self.COLUMNS.credit),

@@ -41,9 +41,9 @@ class Controller:
         extractor = self.extractor_factory.create_extractor(act_type)
 
         self.debits, self.credits = extractor.extract(df)
-        self.render_table()
+        self.rerender_table()
 
-    def render_table(self) -> None:
+    def rerender_table(self) -> None:
         self.main_view.clean_tables()
 
         for d in self.debits:

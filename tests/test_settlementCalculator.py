@@ -3,7 +3,7 @@ from decimal import Decimal
 from datetime import datetime
 
 from src.settlementCalculator import SettlementCalculator
-from src.models import Debit, Credit, MatchedPayment
+from src.models import Debit, CashFlow, MatchedPayment
 
 
 def make_debit(name: str, date: str, amount: str) -> Debit:
@@ -14,8 +14,8 @@ def make_debit(name: str, date: str, amount: str) -> Debit:
     )
 
 
-def make_credit(name: str, date: str, amount: str) -> Credit:
-    return Credit(
+def make_credit(name: str, date: str, amount: str) -> CashFlow:
+    return CashFlow(
         name=name,
         date=datetime.strptime(date, "%d.%m.%y"),
         amount=Decimal(amount),

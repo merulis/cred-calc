@@ -2,90 +2,40 @@ from datetime import timedelta
 from decimal import Decimal
 from collections import deque
 
-from src.models import Debit, Credit, MatchedPayment
+from src.models import CashFlow, MatchedPayment
 
 
 class SettlementCalculator:
-    @classmethod
-    def make_settlement(
-        cls,
-        debits: deque[Debit],
-        credits: list[Credit],
-        deadline_days: int,
+    def __init__(
+        self,
+        deadline_days: timedelta.days,
+        base_penalty_rate: Decimal,
         bank_rate: Decimal,
-        base_rate: Decimal,
+    ):
+        self.deadline_days = deadline_days
+        self.base_penalty_rate = base_penalty_rate
+        self.bank_rate = bank_rate
+
+    def make_settlement(
+        self,
+        debits: deque[CashFlow],
+        credits: list[CashFlow],
     ) -> list[MatchedPayment]:
-        result = []
+        settlement = []
         for credit in credits:
             while credit.amount > 0 and debits:
                 debit = debits[0]
 
-                matched_amount = cls._match_payment(debit, credit)
+                matched_amount = self.amount_matching(debit, credit)
 
-                due_date = debit.date + timedelta(days=deadline_days)
+                due_date = debit.date + timedelta(days=self.deadline_days)
                 overdue_days = max((credit.date - due_date).days, 0)
 
-                base_p = cls._calculate_base_penalty(
-                    matched_amount, overdue_days, base_rate
-                )
-                additionaly_p = cls._calculate_additionaly_penalty(
-                    matched_amount,
-                )
-                percent_p = cls._calculate_percent_penalty(
-                    matched_amount, overdue_days, bank_rate
-                )
+                payment = MatchedPayment()
 
-                record = MatchedPayment(
-                    debit_date=debit.date,
-                    debit_amount=matched_amount,
-                    due_date=due_date,
-                    credit_date=credit.date,
-                    paid=matched_amount,
-                    unpaid=credit.amount,
-                    overdue_days=overdue_days,
-                    penalty_base=base_p,
-                    penalty_additional=additionaly_p,
-                    penalty_percent=percent_p,
-                )
-
-                result.append(record)
+                settlement.append(payment)
 
                 if debit.amount == 0:
                     debits.popleft()
 
-        return result
-
-    @staticmethod
-    def _match_payment(debit: Debit, credit: Credit) -> Decimal:
-        matched_amount = min(debit.amount, credit.amount)
-        debit.amount -= matched_amount
-        credit.amount -= matched_amount
-        return matched_amount
-
-    @staticmethod
-    def _calculate_base_penalty(
-        amount: Decimal,
-        overdue_days: int,
-        penalty_rate: Decimal,
-    ) -> Decimal:
-        return amount * (Decimal(penalty_rate) / Decimal(100)) * Decimal(overdue_days)
-
-    @staticmethod
-    def _calculate_additionaly_penalty(
-        amount: Decimal,
-        penalty_rate=90,
-    ) -> Decimal:
-        return amount * (Decimal(penalty_rate) / Decimal(100))
-
-    @staticmethod
-    def _calculate_percent_penalty(
-        amount: Decimal,
-        overdue_days: int,
-        bank_rate: Decimal,
-    ) -> Decimal:
-        return (
-            amount
-            * (Decimal(bank_rate) / Decimal(100))
-            * Decimal(overdue_days)
-            / Decimal(365)
-        )
+        return settlement
